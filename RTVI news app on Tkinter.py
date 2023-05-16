@@ -3,19 +3,32 @@ from bs4 import BeautifulSoup
 import tkinter as tk
 from tkinter.ttk import *
 from tkinter.scrolledtext import *
-from PIL import Image, ImageTk
+from PIL import ImageTk
 import openpyxl
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from openpyxl.styles.colors import BLUE
+import sys
+import os
 
 
+# Функция для успешного запуска приложения
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+# Начало скрипта программы
 def get_news(url, num=10):
     # Получаем HTML-код страницы
     response = requests.get(url)
     html_doc = response.text
     soup = BeautifulSoup(html_doc, "html.parser")
-
+    
     # Ищем заголовки, ссылки, даты и времена новостей и выводим указанное количество
     news = []
     for news_elem in soup.find_all('div', class_='arch-block')[:num]:
@@ -93,53 +106,55 @@ def on_button_click():
 root = tk.Tk()
 root.geometry("800x480")
 root.resizable(0,0)
-root.config(bg='#FF9999')
+root.config(bg = '#FF9999')
 root.title("Новости RTVI")
-root.iconbitmap('logo.ico')
+icon = tk.PhotoImage(file = resource_path('rtvi.png'))
+root.iconphoto(False, icon)
 
-# Создаем фрейм под логотип, импортируем его и уменьшаем размеры
-image=Image.open('rtvi.png')
-img=image.resize((200, 100))
-my_img=ImageTk.PhotoImage(img)
-label=Label(root, image=my_img, background='#FF9999')
-label.pack()
+# Создаем фрейм под логотип, импортируя его
+img = ImageTk.PhotoImage(file = resource_path('rtvi1.png'))
+frame = tk.Frame(root)
+frame.pack()
+label = Label(frame, image = img, background = '#FF9999')
+label.pack(side='top')
 
 # Создаем фрейм с заголовком приложения
 label_frame = tk.Frame(root)
 label_frame.pack()
-label = tk.Label(label_frame, text="Новости", font="Arial 20 bold", bg='#FF9999', width=500)
-label.pack(side='left')
+label = tk.Label(label_frame, text = "Новости", font = "Arial 20 bold", bg = '#FF9999', width = 500)
+label.pack(side=  'left')
 
 # Создаем виджет для ввода адреса сайта
-entry = tk.Entry(root, font=('Arial 10'))
-entry.pack(side="top")
+entry = tk.Entry(root, font = ('Arial 10'))
+entry.pack(side = "top")
 entry.insert(0, 'https://rtvi.com/news/')
 
 # Создаем виджет для ввода количества новостей
-input_label = tk.Label(root, text="Количество новостей (от 1 до 10):", font="Arial 10 bold", bg='#FF9999')
+input_label = tk.Label(root, text = "Количество новостей (от 1 до 10):", font = "Arial 10 bold", bg = '#FF9999')
 input_label.pack()
-input_entry = tk.Entry(root, width=10, font=('Arial 10'))
-input_entry.pack(side="top")
+input_entry = tk.Entry(root, width = 10, font = ('Arial 10'))
+input_entry.pack(side = "top")
 
 # Создаем кнопку с собственным дизайном для запуска парсинга новостей
 style = Style()
 style.configure('TButton', font =
                ('Arial 10 bold'),
                 foreground = '#DC143C', background = '#FF9999')
-button = Button(root, text="Поиск новостей", style = 'TButton', command=on_button_click)
-button.pack(side="top")
+button = Button(root, text = "Поиск новостей", style = 'TButton', command = on_button_click)
+button.pack(side = "top")
 
 # Создаем фрейм и текстовый виджет для отображения новостей
 text_frame = tk.Frame(root)
-text_frame.pack(side="left", fill="both", expand=True)
-text = tk.Text(text_frame, font=('Times 14'))
-text.pack(side="left", fill="both", expand=True)
+text_frame.pack(side = "left", fill = "both", expand=True)
+text = tk.Text(text_frame, font = ('Times 14'))
+text.pack(side = "left", fill = "both", expand=True)
 
 # Создаем скроллбар и привязываем его к текстовому виджету
 scrollbar = tk.Scrollbar(text_frame)
-scrollbar.pack(side="right", fill="y")
-scrollbar.config(command=text.yview)
-text.config(yscrollcommand=scrollbar.set)
+scrollbar.pack(side = "right", fill = "y")
+scrollbar.config(command = text.yview)
+text.config(yscrollcommand = scrollbar.set)
 
 
+# Запускаем интерфейс приложения
 root.mainloop()
