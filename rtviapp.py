@@ -98,7 +98,7 @@ class NewsApp:
         url = self.entry.get()
         num_input = self.input_entry.get()
 
-        if not num_input.isdigit():  # Проверяем, является ли введенное значение числом
+        if not num_input.isdigit():
             self.text.delete('1.0', tk.END)
             self.text.insert(tk.END, "Ошибка: Введите целое положительное число в поле количества новостей")
             return
